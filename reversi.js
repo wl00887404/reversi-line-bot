@@ -1,10 +1,8 @@
-const {
-  gridLength,
-} = require('./setting.json');
+const { gridLength } = require("./setting.json");
 
-const drawJpg = require('./reversi.jpg');
+const drawJpg = require("./reversi.jpg");
 
-const uri = process.env.uri || '.';
+const uri = process.env.URI || ".";
 const boardLength = gridLength + 2;
 const allLength = gridLength * gridLength;
 const deltas = [
@@ -20,23 +18,23 @@ const deltas = [
 
 class Game {
   constructor(groupId) {
-    this.turn = 'black';
+    this.turn = "black";
     this.player = {};
     this.pieces = [];
-    this.pieces[44] = 'white';
-    this.pieces[55] = 'white';
-    this.pieces[54] = 'black';
-    this.pieces[45] = 'black';
+    this.pieces[44] = "white";
+    this.pieces[55] = "white";
+    this.pieces[54] = "black";
+    this.pieces[45] = "black";
 
     this.picture = `${uri}/init.jpg`;
     this.groupId = groupId;
   }
 
   nextPlayer() {
-    if (this.turn === 'black') {
-      this.turn = 'white';
+    if (this.turn === "black") {
+      this.turn = "white";
     } else {
-      this.turn = 'black';
+      this.turn = "black";
     }
   }
 
@@ -49,12 +47,12 @@ class Game {
   async put(x, y) {
     if (x < 1 || x >= gridLength + 1 || y < 1 || y >= gridLength + 1) {
       console.log(x, y);
-      throw '嘿，你不能下在那！';
+      throw "嘿，你不能下在那！";
     }
     const { pieces, turn } = this;
-    const n = (x * boardLength) + y;
+    const n = x * boardLength + y;
     if (pieces[n]) {
-      throw '那裡已經有棋子了！';
+      throw "那裡已經有棋子了！";
     }
 
     let path = [];
@@ -77,10 +75,12 @@ class Game {
     });
 
     if (path.length === 0) {
-      throw '嘿，你不能下在那！';
+      throw "嘿，你不能下在那！";
     }
 
-    path.forEach((delta) => { pieces[delta] = turn; });
+    path.forEach((delta) => {
+      pieces[delta] = turn;
+    });
     pieces[n] = turn;
 
     this.nextPlayer();
@@ -89,15 +89,21 @@ class Game {
 
   checkWinner() {
     const { pieces } = this;
-    const blackLength = pieces.filter(color => color === 'black').length;
-    if (blackLength === 0) { return 'white'; }
+    const blackLength = pieces.filter((color) => color === "black").length;
+    if (blackLength === 0) {
+      return "white";
+    }
 
-    const whiteLength = pieces.filter(color => color === 'white').length;
-    if (whiteLength === 0) { return 'black'; }
+    const whiteLength = pieces.filter((color) => color === "white").length;
+    if (whiteLength === 0) {
+      return "black";
+    }
 
-    if (pieces.filter(x => x).length !== allLength) { return undefined; }
+    if (pieces.filter((x) => x).length !== allLength) {
+      return undefined;
+    }
 
-    return blackLength > whiteLength ? 'black' : 'white';
+    return blackLength > whiteLength ? "black" : "white";
   }
 }
 
